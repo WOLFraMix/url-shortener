@@ -3,6 +3,8 @@ package main
 import (
 	"log"
 	"net/http"
+
+	"github.com/wolframix/url-shortener/internal/config"
 )
 
 func main() {
@@ -16,8 +18,9 @@ func main() {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/health", health)
 
-	log.Println("server listening on :8080")
-	err := http.ListenAndServe(":8080", mux)
+	cfg := config.NewConfig()
+	log.Println("server listening on", cfg.Port)
+	err := http.ListenAndServe(cfg.Port, mux)
 	if err != nil {
 		log.Fatal(err)
 	}

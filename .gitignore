@@ -1,3 +1,4 @@
 main
 *.exe
 .env
+struct.png
