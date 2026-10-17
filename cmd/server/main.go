@@ -58,6 +58,11 @@ func shortenHandler(st *storage.Storage) http.HandlerFunc {
 			return
 		}
 
+		if err := handlers.ValidateURL(req.URL); err != nil {
+			http.Error(w, "invalid url", http.StatusBadRequest)
+			return
+		}
+
 		shortCode := generateShortCode(req.URL)
 
 		err = st.Save(req.URL, shortCode)
