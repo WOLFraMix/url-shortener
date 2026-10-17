@@ -7,6 +7,7 @@ import (
 
 	"github.com/joho/godotenv"
 	"github.com/wolframix/url-shortener/internal/config"
+	"github.com/wolframix/url-shortener/internal/storage"
 )
 
 func main() {
@@ -16,6 +17,12 @@ func main() {
 	}
 
 	cfg := config.NewConfig()
+
+	_, err = storage.NewStorage(cfg.DbUrl)
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.Println("db connected:")
 
 	health := func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
