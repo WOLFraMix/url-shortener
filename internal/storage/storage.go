@@ -33,3 +33,11 @@ func (s *Storage) GetByShortCode(code string) (string, error) {
 		code).Scan(&originalURL)
 	return originalURL, err
 }
+
+func (s *Storage) GetByURL(originalURL string) (string, error) {
+	var code string
+	err := s.pool.QueryRow(context.Background(),
+		"SELECT short_code FROM links WHERE original_url = $1",
+		originalURL).Scan(&code)
+	return code, err
+}
