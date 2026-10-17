@@ -1,12 +1,14 @@
 package config
 
 import (
+	"log"
 	"os"
 	"strings"
 )
 
 type Config struct {
-	Port string
+	Port  string
+	DbUrl string
 }
 
 func NewConfig() *Config {
@@ -17,7 +19,14 @@ func NewConfig() *Config {
 	if !strings.HasPrefix(port, ":") {
 		port = ":" + port
 	}
+
+	dbUrl := os.Getenv("DATABASE_URL")
+	if dbUrl == "" {
+		log.Fatal("missing DATABASE_URL environment variable")
+	}
+
 	return &Config{
-		Port: port,
+		Port:  port,
+		DbUrl: dbUrl,
 	}
 }
