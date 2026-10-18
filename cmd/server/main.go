@@ -14,7 +14,7 @@ import (
 func main() {
 	err := godotenv.Load()
 	if err != nil {
-		log.Println(err)
+		log.Println("no .env file, using environment variables")
 	}
 
 	cfg := config.NewConfig()
