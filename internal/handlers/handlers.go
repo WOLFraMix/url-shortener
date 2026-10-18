@@ -11,8 +11,13 @@ import (
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
-	"github.com/wolframix/url-shortener/internal/storage"
 )
+
+type Shortener interface {
+	Save(originalURL, shortCode string) error
+	GetByShortCode(code string) (string, error)
+	GetByURL(originalURL string) (string, error)
+}
 
 type ShortenRequest struct {
 	URL string `json:"url"`
@@ -44,7 +49,7 @@ func ValidateURL(raw string) error {
 	return nil
 }
 
-func ShortenHandler(st *storage.Storage) http.HandlerFunc {
+func ShortenHandler(st Shortener) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		req, err := ParseShortenRequest(r)
 		if err != nil {
@@ -87,7 +92,7 @@ func GenerateShortCode(originalURL string) string {
 	return encoded[:8]
 }
 
-func GetByShortCodeHandler(st *storage.Storage) http.HandlerFunc {
+func GetByShortCodeHandler(st Shortener) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		code := r.PathValue("code")
 
