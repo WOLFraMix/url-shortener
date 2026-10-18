@@ -5,7 +5,6 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"log"
 	"net/http"
 
@@ -14,16 +13,22 @@ import (
 	"github.com/joho/godotenv"
 	"github.com/wolframix/url-shortener/internal/config"
 	"github.com/wolframix/url-shortener/internal/handlers"
+	"github.com/wolframix/url-shortener/internal/migrations"
 	"github.com/wolframix/url-shortener/internal/storage"
 )
 
 func main() {
 	err := godotenv.Load()
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 	}
 
 	cfg := config.NewConfig()
+
+	err = migrations.Run(cfg.DbUrl)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	health := func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
@@ -97,7 +102,7 @@ func getByShortCodeHandler(st *storage.Storage) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		code := r.PathValue("code")
 
-		url, err := st.GetByShortCode(code)
+		originalUrl, err := st.GetByShortCode(code)
 		if errors.Is(err, pgx.ErrNoRows) {
 			http.Error(w, "not found", http.StatusNotFound)
 			return
@@ -107,6 +112,6 @@ func getByShortCodeHandler(st *storage.Storage) http.HandlerFunc {
 			return
 		}
 
-		http.Redirect(w, r, url, http.StatusFound)
+		http.Redirect(w, r, originalUrl, http.StatusFound)
 	}
 }
