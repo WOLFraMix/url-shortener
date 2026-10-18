@@ -1,0 +1,18 @@
+# URL Shortener
+
+Сокращатель ссылок на Go + PostgreSQL.
+
+## Запуск
+
+1. Скопируйте `.env.example` в `.env` и подставьте свои значения.
+2. docker compose up --build
+3. Сервер поднимется на <http://localhost:8080>
+
+## API
+
+- POST /shorten — тело {"url": "https://..."} → 201 {"short_code": "..."}
+- GET /{code} — редирект на оригинальную ссылку (302) или 404
+
+## Тесты
+
+go test ./...
