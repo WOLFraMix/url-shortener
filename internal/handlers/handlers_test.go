@@ -21,6 +21,9 @@ func TestValidateURL(t *testing.T) {
 		{name: "int", raw: "12345", wantValid: false},
 		{name: "quoted literal", raw: "''", wantValid: false},
 		{name: "://.", raw: "://.", wantValid: false},
+		{name: "dots", raw: "...", wantValid: false},
+		{name: "https://12345.ru", raw: "https://12345.ru", wantValid: true},
+		{name: "valid https in brackets", raw: "(https://go.dev)", wantValid: false},
 	}
 
 	for _, tc := range tests {
